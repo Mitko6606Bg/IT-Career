@@ -1,0 +1,139 @@
+﻿@model IEnumerable<AppUser>
+
+
+
+
+<div class="container">
+    <div class="filter-group">
+        <label for="nameFilter">Name:</label>
+        <input type="text" id="nameFilter" oninput="filterAccounts()">
+        <label for="userNameFilter">User Name:</label>
+        <input type="text" id="userNameFilter" oninput="filterAccounts()">
+        <label for="emailFilter">Email:</label>
+        <input type="text" id="emailFilter" oninput="filterAccounts()">
+    </div>
+
+    <div class="filter-group">
+        <label for="egnFilter">EGN:</label>
+        <input type="text" id="egnFilter" oninput="filterAccounts()">
+        <label for="phoneNumberFilter">Phone Number:</label>
+        <input type="text" id="phoneNumberFilter" oninput="filterAccounts()">
+        <label>Show:</label>
+        <select id="pageSizeSelect" onchange="changePageSize()">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+    </div>
+
+    <div id="accountsContainer">
+        @foreach (var user in Model)
+        {
+            <div class="accountBox">
+                <p>Name: @user.Name</p>
+                <p>User Name: @user.UserName</p>
+                <p>Email: @user.Email</p>
+                <p>EGN: @user.EGN</p>
+                <p>Phone Number: @user.PhoneNumber</p>
+                <!-- Adjust the link to point to the Manage action in AdminController -->
+                <a href="@Url.Action("Manage", "Admin", new { id = user.Id })" class="btn btn-primary">Manage</a>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+<script>
+    function changePageSize() {
+        var selectedPageSize = document.getElementById("pageSizeSelect").value;
+        // Store the selected value in localStorage
+        localStorage.setItem("pageSize", selectedPageSize);
+        // Update the account list
+        updateAccountList(selectedPageSize);
+    }
+
+    // Function to retrieve and set the selected value from localStorage
+    window.onload = function () {
+        var savedPageSize = localStorage.getItem("pageSize");
+        if (savedPageSize) {
+            document.getElementById("pageSizeSelect").value = savedPageSize;
+        }
+    };
+
+    // Function to update the account list
+    function updateAccountList(pageSize) {
+        var url = '/Admin/UsersIndex?pageSize=' + pageSize;
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                // Extract accounts container HTML
+                var accountsContainerHtml = new DOMParser().parseFromString(data, 'text/html').getElementById("accountsContainer").innerHTML;
+                document.getElementById("accountsContainer").innerHTML = accountsContainerHtml;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function filterAccounts() {
+        var nameFilter = document.getElementById("nameFilter").value.toUpperCase();
+        var userNameFilter = document.getElementById("userNameFilter").value.toUpperCase();
+        var emailFilter = document.getElementById("emailFilter").value.toUpperCase();
+        var egnFilter = document.getElementById("egnFilter").value.toUpperCase();
+        var phoneNumberFilter = document.getElementById("phoneNumberFilter").value.toUpperCase();
+
+        var accounts = document.getElementsByClassName("accountBox");
+
+        for (var i = 0; i < accounts.length; i++) {
+            var account = accounts[i];
+            var name = account.getElementsByTagName("p")[0].innerText.toUpperCase();
+            var userName = account.getElementsByTagName("p")[1].innerText.toUpperCase();
+            var email = account.getElementsByTagName("p")[2].innerText.toUpperCase();
+            var egn = account.getElementsByTagName("p")[3].innerText.toUpperCase();
+            var phoneNumber = account.getElementsByTagName("p")[4].innerText.toUpperCase();
+
+            if (name.indexOf(nameFilter) > -1 && userName.indexOf(userNameFilter) > -1 &&
+                email.indexOf(emailFilter) > -1 && egn.indexOf(egnFilter) > -1 &&
+                phoneNumber.indexOf(phoneNumberFilter) > -1) {
+                account.style.display = "";
+            } else {
+                account.style.display = "none";
+            }
+        }
+    }
+
+    function manageAccount(userId) {
+        // Redirect to the Manage action in AdminController
+        window.location.href = "/Admin/Manage/" + userId;
+    }
+
+</script>
+
+<style>
+    .container {
+        text-align: center;
+    }
+
+    .accountBox {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px; /* Increase margin between user boxes */
+        width: calc(25% - 20px); /* Adjust width as needed */
+        display: inline-block;
+        margin-right: 20px; /* Adjust margin as needed */
+        vertical-align: top;
+    }
+
+    .filter-group {
+        margin-bottom: 10px;
+    }
+
+        .filter-group label {
+            margin-right: 10px;
+        }
+
+        .filter-group input {
+            width: 150px; /* Adjust input width as needed */
+        }
+</style>
+

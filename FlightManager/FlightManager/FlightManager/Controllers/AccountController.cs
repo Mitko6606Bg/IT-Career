@@ -35,7 +35,7 @@ namespace FlightManager.Controllers
                 {
                     if (User.IsInRole("Admin"))
                     {
-                        return RedirectToAction("Index", "Admin");
+                        return RedirectToAction("Index", "Home");
                     }
                     else if (User.IsInRole("Member"))
                     {
@@ -70,11 +70,12 @@ namespace FlightManager.Controllers
                 };
 
                 var result = await userManager.CreateAsync(user, model.Password!);
-                await userManager.AddToRoleAsync(user, "Member");
+                
 
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, false);
+                    await userManager.AddToRoleAsync(user, "Member");
                     return RedirectToAction("Index", "Home");
                 }
                 foreach (var error in result.Errors)

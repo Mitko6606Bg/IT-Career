@@ -1,8 +1,13 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
 }
 <div class ="align-items-center justify-content-center">
     <label class="text-primary">Admin Panel</label>
+    <div>
+        <a href="@Url.Action("UsersIndex", "Admin")" class="btn btn-primary">Go to User Management Panel</a>
+    </div>
+    <div>
+        <a href="@Url.Action("Create", "Flight")" class="btn btn-primary">Go to Add a Flight</a>
+        <a href="@Url.Action("FlightsIndex", "Flight")" class="btn btn-primary">Go to Flight Management Panel</a>
+    </div>
+
 </div>

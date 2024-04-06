@@ -1,0 +1,23 @@
+﻿@using FlightManager.ViewModels
+@model IEnumerable<FlightViewModel>
+
+@foreach (var flight in Model)
+{
+    <div class="col-md-6">
+        <div class="flightBox">
+            <div class="flight-info">
+                <p><strong>From Location:</strong> @flight.FromLocation</p>
+                <p><strong>To Location:</strong> @flight.ToLocation</p>
+                <p><strong>Departure Date Time:</strong> @flight.DepartureDateTime</p>
+                <p><strong>Landing Date Time:</strong> @flight.LandingDateTime</p>
+            </div>
+            <div class="flight-info">
+                <p><strong>Aircraft Type:</strong> @flight.AircraftType</p>
+                <p><strong>Aircraft Number:</strong> @flight.AircraftNumber</p>
+                <p><strong>Pilot Name:</strong> @flight.PilotName</p>
+                <p><strong>Passenger Capacity:</strong> @flight.PassengerCapacity</p>
+                <p><strong>Business Class Capacity:</strong> @flight.BusinessClassCapacity</p>
+            </div>
+        </div>
+    </div>
+}

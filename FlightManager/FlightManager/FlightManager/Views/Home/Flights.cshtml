@@ -1,0 +1,121 @@
+﻿@using FlightManager.ViewModels
+@model IEnumerable<FlightViewModel>
+
+<div class="container">
+    <div class="filter-group">
+        <label for="fromLocationFilter">From Location:</label>
+        <input type="text" id="fromLocationFilter" oninput="filterFlights()">
+        <label for="toLocationFilter">To Location:</label>
+        <input type="text" id="toLocationFilter" oninput="filterFlights()">
+    </div>
+
+    <div class="filter-group">
+        <label for="aircraftNumberFilter">Aircraft Number:</label>
+        <input type="text" id="aircraftNumberFilter" oninput="filterFlights()">
+        <label>Show:</label>
+        <select id="pageSizeSelect" onchange="changePageSize()">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+    </div>
+
+    <div id="flightsContainer" class="row">
+        @foreach (var flight in Model)
+        {
+            <div class="col-md-6">
+                <div class="flightBox">
+                    <div class="flight-info">
+                        <p><strong>From Location:</strong> @flight.FromLocation</p>
+                        <p><strong>To Location:</strong> @flight.ToLocation</p>
+                        <p><strong>Departure Date Time:</strong> @flight.DepartureDateTime</p>
+                        <p><strong>Landing Date Time:</strong> @flight.LandingDateTime</p>
+                    </div>
+                    <div class="flight-info">
+                        <p><strong>Aircraft Type:</strong> @flight.AircraftType</p>
+                        <p><strong>Aircraft Number:</strong> @flight.AircraftNumber</p>
+                        <p><strong>Pilot Name:</strong> @flight.PilotName</p>
+                        <p><strong>Passenger Capacity:</strong> @flight.PassengerCapacity</p>
+                        <p><strong>Business Class Capacity:</strong> @flight.BusinessClassCapacity</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    // Your existing JavaScript code here
+
+    document.getElementById('flightsButton').addEventListener('click', function () {
+        // Simulate available trips (you would fetch this from a server in a real-world scenario)
+        var availableFlights = [
+            // Flight data here
+        ];
+
+        var tripContainer = document.getElementById('tripContainer');
+        var availableFlightsUl = document.getElementById('availableFlights');
+        availableFlightsUl.innerHTML = '';
+
+        availableFlights.forEach(function (flight) {
+            var flightElement = document.createElement('li');
+            flightElement.innerHTML = `
+                        <div class="flight-info">
+                            <p><strong>From Location:</strong> ${flight.from}</p>
+                            <p><strong>To Location:</strong> ${flight.to}</p>
+                            <p><strong>Departure Date Time:</strong> ${flight.departure}</p>
+                            <p><strong>Landing Date Time:</strong> ${flight.arrival}</p>
+                        </div>
+                        <div class="flight-info">
+                            <p><strong>Aircraft Type:</strong> ${flight.aircraft}</p>
+                            <p><strong>Pilot Name:</strong> ${flight.pilot}</p>
+                            <p><strong>Passenger Capacity:</strong> ${flight.capacity}</p>
+                            <p><strong>Business Class Capacity:</strong> ${flight.businessCapacity}</p>
+                        </div>`;
+            availableFlightsUl.appendChild(flightElement);
+        });
+
+        // Show the trip container
+        tripContainer.style.display = 'block';
+
+        var origin = document.getElementById('from').value;
+        var destination = document.getElementById('to').value;
+        document.getElementById('origin').textContent = origin;
+        document.getElementById('destination').textContent = destination;
+
+        // Filter flights based on the provided criteria
+        filterFlights();
+    });
+
+    function filterFlights() {
+        var fromLocationFilter = document.getElementById("from").value.toUpperCase();
+        var toLocationFilter = document.getElementById("to").value.toUpperCase();
+
+        var flights = document.getElementsByClassName("flightBox");
+
+        for (var i = 0; i < flights.length; i++) {
+            var flight = flights[i];
+            var fromLocation = flight.getElementsByTagName("p")[0].innerText.toUpperCase();
+            var toLocation = flight.getElementsByTagName("p")[1].innerText.toUpperCase();
+
+            if (fromLocation.indexOf(fromLocationFilter) > -1 && toLocation.indexOf(toLocationFilter) > -1) {
+                flight.style.display = "";
+            } else {
+                flight.style.display = "none";
+            }
+        }
+    }
+</script>
+
+<style>
+    .flightBox {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    .flight-info {
+        display: inline-block;
+        width: 50%;
+    }
+</style>

@@ -1,8 +1,188 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using FlightManager.ViewModels
+@model IEnumerable<FlightViewModel>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <label for="to" style="font-weight: bold; font-size: 30px;">Where to boss</label>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: inline-block;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+            .input-group label {
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .input-group input {
+                width: calc(100% - 22px); /* Adjusted width to account for padding */
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+
+        .photo-container {
+            margin-bottom: 20px;
+        }
+
+        .photo {
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 20px;
+        }
+
+            .photo img {
+                width: 100%;
+                height: auto;
+            }
+
+        .trip-container {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: left;
+        }
+
+        #destinationText {
+            font-size: 18px; /* Adjusted font size */
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="input-container">
+            <div class="photo-container">
+                <div class="photo">
+                    <img src="https://t3.ftcdn.net/jpg/05/39/81/04/360_F_539810443_PBJlvEayIkJM1TGJ40nSTIgSpYCrtRJt.jpg" alt="City Photo">
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="from">From:</label>
+                <input type="text" id="from" name="from" placeholder="Enter origin" required>
+            </div>
+            <div class="input-group">
+                <label for="to">To:</label>
+                <input type="text" id="to" name="to" placeholder="Enter destination" required>
+            </div>
+            <button id="flightsButton" disabled>Flights</button>
+        </div>
+        <div class="trip-container" id="tripContainer" style="display: none;">
+            <h2 id="destinationText">Available Flights from <span id="origin"></span> to <span id="destination"></span>:</h2>
+            <div id="flightsContainer" class="row">
+                @foreach (var flight in Model)
+                {
+                    <div class="col-md-6 flightBox">
+                        <div class="flight-info">
+                            <p><strong>From Location:</strong> @flight.FromLocation</p>
+                            <p><strong>To Location:</strong> @flight.ToLocation</p>
+                            <p><strong>Departure Date Time:</strong> @flight.DepartureDateTime</p>
+                            <p><strong>Landing Date Time:</strong> @flight.LandingDateTime</p>
+                        </div>
+                        <div class="flight-info">
+                            <p><strong>Aircraft Type:</strong> @flight.AircraftType</p>
+                            <p><strong>Aircraft Number:</strong> @flight.AircraftNumber</p>
+                            <p><strong>Pilot Name:</strong> @flight.PilotName</p>
+                            <p><strong>Passenger Capacity:</strong> @flight.PassengerCapacity</p>
+                            <p><strong>Business Class Capacity:</strong> @flight.BusinessClassCapacity</p>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div id="noFlightsMessage" style="display: none;">
+                No available flights for the selected route.
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var fromInput = document.getElementById('from');
+        var toInput = document.getElementById('to');
+        var planTripButton = document.getElementById('flightsButton');
+        var flightsData = @Html.Raw(Json.Serialize(Model)); // Deserialize flight data from Razor model
+
+        function toggleButton() {
+            if (fromInput.checkValidity() && toInput.checkValidity()) {
+                planTripButton.disabled = false;
+            } else {
+                planTripButton.disabled = true;
+            }
+        }
+
+        // Event listener to check input validity when inputs are changed
+        fromInput.addEventListener('input', toggleButton);
+        toInput.addEventListener('input', toggleButton);
+
+        document.getElementById('flightsButton').addEventListener('click', function () {
+            var fromLocationFilter = document.getElementById("from").value.toUpperCase();
+            var toLocationFilter = document.getElementById("to").value.toUpperCase();
+
+            filterFlights(fromLocationFilter, toLocationFilter);
+        });
+
+        function filterFlights() {
+            var fromLocationFilter = document.getElementById("from").value.toUpperCase();
+            var toLocationFilter = document.getElementById("to").value.toUpperCase();
+            var flights = document.getElementsByClassName("flightBox");
+            var tripContainer = document.getElementById("tripContainer");
+            var flightsContainer = document.getElementById("flightsContainer");
+            var noFlightsMessage = document.getElementById("noFlightsMessage");
+            var foundFlights = false;
+
+            for (var i = 0; i < flights.length; i++) {
+                var flight = flights[i];
+                var fromLocation = flight.getElementsByTagName("p")[0].innerText.toUpperCase();
+                var toLocation = flight.getElementsByTagName("p")[1].innerText.toUpperCase();
+
+                if (fromLocation.indexOf(fromLocationFilter) > -1 && toLocation.indexOf(toLocationFilter) > -1) {
+                    flight.style.display = "";
+                    foundFlights = true;
+                } else {
+                    flight.style.display = "none";
+                }
+            }
+
+            if (foundFlights) {
+                tripContainer.style.display = "";
+                noFlightsMessage.style.display = "none";
+            } else {
+                tripContainer.style.display = "none";
+                noFlightsMessage.style.display = "";
+            }
+        }
+
+        document.getElementById("flightsButton").addEventListener("click", filterFlights);
+
+    </script>
+</body>
+</html>
