@@ -38,11 +38,14 @@
                         <p><strong>Passenger Capacity:</strong> @flight.PassengerCapacity</p>
                         <p><strong>Business Class Capacity:</strong> @flight.BusinessClassCapacity</p>
                     </div>
+                    <div>
+                        <a href="@Url.Action("Create", "Reservation", new { id = flight.Id })" class="btn btn-primary">Reserve</a>
+                    </div>
                 </div>
             </div>
         }
     </div>
-</div>
+
 
 <script>
     // Your existing JavaScript code here

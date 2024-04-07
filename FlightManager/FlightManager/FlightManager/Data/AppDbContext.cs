@@ -12,5 +12,6 @@ namespace FlightManager.Data
         {
         }
         public DbSet<Flight> Flights { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
     }
 }

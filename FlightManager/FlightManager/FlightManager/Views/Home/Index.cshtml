@@ -143,9 +143,18 @@
         fromInput.addEventListener('input', toggleButton);
         toInput.addEventListener('input', toggleButton);
 
+
+
         document.getElementById('flightsButton').addEventListener('click', function () {
             var fromLocationFilter = document.getElementById("from").value.toUpperCase();
             var toLocationFilter = document.getElementById("to").value.toUpperCase();
+
+            var origin = document.getElementById('from').value;
+            var destination = document.getElementById('to').value;
+
+            // Update the text content of the spans with the retrieved values
+            document.getElementById('origin').textContent = origin;
+            document.getElementById('destination').textContent = destination;
 
             filterFlights(fromLocationFilter, toLocationFilter);
         });
@@ -159,12 +168,17 @@
             var noFlightsMessage = document.getElementById("noFlightsMessage");
             var foundFlights = false;
 
+            // Create regular expressions to match whole words
+            var fromRegex = new RegExp("\\b" + fromLocationFilter + "\\b");
+            var toRegex = new RegExp("\\b" + toLocationFilter + "\\b");
+
             for (var i = 0; i < flights.length; i++) {
                 var flight = flights[i];
                 var fromLocation = flight.getElementsByTagName("p")[0].innerText.toUpperCase();
                 var toLocation = flight.getElementsByTagName("p")[1].innerText.toUpperCase();
 
-                if (fromLocation.indexOf(fromLocationFilter) > -1 && toLocation.indexOf(toLocationFilter) > -1) {
+                // Use regular expressions to test for whole word match
+                if (fromRegex.test(fromLocation) && toRegex.test(toLocation)) {
                     flight.style.display = "";
                     foundFlights = true;
                 } else {
@@ -172,13 +186,9 @@
                 }
             }
 
-            if (foundFlights) {
-                tripContainer.style.display = "";
-                noFlightsMessage.style.display = "none";
-            } else {
-                tripContainer.style.display = "none";
-                noFlightsMessage.style.display = "";
-            }
+            // Show or hide the appropriate message based on whether flights are found
+            tripContainer.style.display = foundFlights ? "" : "none";
+            noFlightsMessage.style.display = foundFlights ? "none" : "";
         }
 
         document.getElementById("flightsButton").addEventListener("click", filterFlights);
