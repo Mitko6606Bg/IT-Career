@@ -13,7 +13,7 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 600px; /* Adjusted max-width */
             margin: 20px auto;
             padding: 20px;
             background-color: #fff;
@@ -38,13 +38,18 @@
                 margin-bottom: 5px;
             }
 
-            .input-group input {
-                width: calc(100% - 22px); /* Adjusted width to account for padding */
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                box-sizing: border-box;
-            }
+        
+
+        .input-group input {
+            width: calc(100% - 40px); /* Adjusted width to account for padding */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px; /* Round edges */
+            box-sizing: border-box;
+            display: block;
+            margin: 0 auto; /* Center the input */
+            text-align: center; /* Center the text horizontally */
+        }
 
         .photo-container {
             margin-bottom: 20px;
@@ -74,6 +79,34 @@
             font-size: 18px; /* Adjusted font size */
             font-weight: bold;
         }
+
+        .flightBox {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 10px; /* Added border radius */
+        }
+
+        .flight-info {
+            display: inline-block;
+            width: 50%;
+        }
+
+        .btn-reserve {
+            display: inline-block;
+            margin-top: 10px;
+            border-radius: 5px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-reserve:hover {
+                background-color: #0056b3;
+            }
+
 
     </style>
 </head>
@@ -115,6 +148,7 @@
                             <p><strong>Passenger Capacity:</strong> @flight.PassengerCapacity</p>
                             <p><strong>Business Class Capacity:</strong> @flight.BusinessClassCapacity</p>
                         </div>
+                        <a href="@Url.Action("Create", "Reservation", new { id = flight.Id })" class="btn btn-reserve">Reserve</a>
                     </div>
                 }
             </div>

@@ -1,5 +1,5 @@
 ﻿@using FlightManager.ViewModels
-@model FlightViewModel
+@model FlightReservationTicketViewModel
 
 <div>
     <a href="@Url.Action("FlightsIndex", "Flight")" class="btn btn-secondary">Back</a>
@@ -10,67 +10,67 @@
 <h2>Manage Flight</h2>
 
 <form asp-action="Manage" method="post">
-    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Flight.Id" />
 
     <div class="form-group">
-        <label asp-for="FromLocation">From Location:</label>
-        <input asp-for="FromLocation" class="form-control" />
-        <span asp-validation-for="FromLocation" class="text-danger"></span>
+        <label asp-for="Flight.FromLocation">From Location:</label>
+        <input asp-for="Flight.FromLocation" class="form-control" />
+        <span asp-validation-for="Flight.FromLocation" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="ToLocation">To Location:</label>
-        <input asp-for="ToLocation" class="form-control" />
-        <span asp-validation-for="ToLocation" class="text-danger"></span>
+        <label asp-for="Flight.ToLocation">To Location:</label>
+        <input asp-for="Flight.ToLocation" class="form-control" />
+        <span asp-validation-for="Flight.ToLocation" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="DepartureDateTime">Departure Date Time:</label>
-        <input asp-for="DepartureDateTime" type="datetime-local" class="form-control" />
-        <span asp-validation-for="DepartureDateTime" class="text-danger"></span>
+        <label asp-for="Flight.DepartureDateTime">Departure Date Time:</label>
+        <input asp-for="Flight.DepartureDateTime" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Flight.DepartureDateTime" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="LandingDateTime">Landing Date Time:</label>
-        <input asp-for="LandingDateTime" type="datetime-local" class="form-control" />
-        <span asp-validation-for="LandingDateTime" class="text-danger"></span>
+        <label asp-for="Flight.LandingDateTime">Landing Date Time:</label>
+        <input asp-for="Flight.LandingDateTime" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Flight.LandingDateTime" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="AircraftType">Aircraft Type:</label>
-        <input asp-for="AircraftType" class="form-control" />
-        <span asp-validation-for="AircraftType" class="text-danger"></span>
+        <label asp-for="Flight.AircraftType">Aircraft Type:</label>
+        <input asp-for="Flight.AircraftType" class="form-control" />
+        <span asp-validation-for="Flight.AircraftType" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="AircraftNumber">Aircraft Number:</label>
-        <input asp-for="AircraftNumber" class="form-control" />
-        <span asp-validation-for="AircraftNumber" class="text-danger"></span>
+        <label asp-for="Flight.AircraftNumber">Aircraft Number:</label>
+        <input asp-for="Flight.AircraftNumber" class="form-control" />
+        <span asp-validation-for="Flight.AircraftNumber" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="PilotName">Pilot Name:</label>
-        <input asp-for="PilotName" class="form-control" />
-        <span asp-validation-for="PilotName" class="text-danger"></span>
+        <label asp-for="Flight.PilotName">Pilot Name:</label>
+        <input asp-for="Flight.PilotName" class="form-control" />
+        <span asp-validation-for="Flight.PilotName" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="PassengerCapacity">Passenger Capacity:</label>
-        <input asp-for="PassengerCapacity" type="number" class="form-control" />
-        <span asp-validation-for="PassengerCapacity" class="text-danger"></span>
+        <label asp-for="Flight.PassengerCapacity">Passenger Capacity:</label>
+        <input asp-for="Flight.PassengerCapacity" type="number" class="form-control" />
+        <span asp-validation-for="Flight.PassengerCapacity" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="BusinessClassCapacity">Business Class Capacity:</label>
-        <input asp-for="BusinessClassCapacity" type="number" class="form-control" />
-        <span asp-validation-for="BusinessClassCapacity" class="text-danger"></span>
+        <label asp-for="Flight.BusinessClassCapacity">Business Class Capacity:</label>
+        <input asp-for="Flight.BusinessClassCapacity" type="number" class="form-control" />
+        <span asp-validation-for="Flight.BusinessClassCapacity" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
 
 <form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Flight.Id" />
 
     <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this flight?')">Delete</button>
 </form>
@@ -89,3 +89,67 @@
         successMessageElement.style.display = "block";
     }
 </script>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Manage" method="get">
+            <div class="form-group">
+                <label for="searchTerm">Search by Name or Email:</label>
+                <input type="text" id="searchTerm" name="searchTerm" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Number of Tickets</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>EGN</th>
+            <th>Phone Number</th>
+            <th>Nationality</th>
+            <th>Type of Reservation</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reservationAndTicket in Model.ReservationAndTicket)
+        {
+            <tr>
+                <td>@reservationAndTicket.Reservation.Email</td>
+                <td>@reservationAndTicket.Tickets.Count</td>
+                @if (reservationAndTicket.Tickets.Any())
+                {
+                    var firstTicket = reservationAndTicket.Tickets.First();
+                    <td>@firstTicket.FirstName</td>
+                    <td>@firstTicket.LastName</td>
+                    <td>@firstTicket.EGN</td>
+                    <td>@firstTicket.PhoneNumber</td>
+                    <td>@firstTicket.Nationality</td>
+                    <td>@firstTicket.TypeOfReservation</td>
+                }
+                else
+                {
+                    <td colspan="7">No tickets</td>
+                }
+            </tr>
+            @foreach (var ticket in reservationAndTicket.Tickets.Skip(1))
+            {
+                <tr>
+                    <td></td> <!-- Empty cell for spacing -->
+                    <td></td>
+                    <td>@ticket.FirstName</td>
+                    <td>@ticket.LastName</td>
+                    <td>@ticket.EGN</td>
+                    <td>@ticket.PhoneNumber</td>
+                    <td>@ticket.Nationality</td>
+                    <td>@ticket.TypeOfReservation</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

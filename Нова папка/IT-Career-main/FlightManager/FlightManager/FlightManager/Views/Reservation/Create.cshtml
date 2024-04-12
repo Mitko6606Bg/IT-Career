@@ -1,0 +1,71 @@
+﻿@model FlightManager.ViewModels.ReservationAndTicketViewModel
+
+<h1>Create Reservation</h1>
+
+@if (TempData["SuccessMessageReservationCreate"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessageReservationCreate"]
+    </div>
+}
+
+<!-- Reservation section -->
+<h2>Reservation Details</h2>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Reservation.Email" class="control-label">Email:</label>
+        <input asp-for="Reservation.Email" class="form-control" />
+        <span asp-validation-for="Reservation.Email" class="text-danger"></span>
+    </div>
+
+    <h2>Tickets</h2>
+    <div id="ticket-container">
+        <!-- Ticket fields will be dynamically added here -->
+    </div>
+    <button type="button" id="add-ticket-btn" class="btn btn-success">Add Ticket</button>
+
+    <div class="form-group">
+        <input type="submit" value="Create Reservation" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var ticketIndex = 0;
+            $('#add-ticket-btn').click(function () {
+                var ticketHtml = `
+                            <div class="ticket-fields">
+                                <div class="form-group">
+                                    <label>First Name:</label>
+                                    <input type="text" name="Tickets[${ticketIndex}].FirstName" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name:</label>
+                                    <input type="text" name="Tickets[${ticketIndex}].LastName" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label>EGN:</label>
+                                    <input type="text" name="Tickets[${ticketIndex}].EGN" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone Number:</label>
+                                    <input type="text" name="Tickets[${ticketIndex}].PhoneNumber" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Nationality:</label>
+                                    <input type="text" name="Tickets[${ticketIndex}].Nationality" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Type of Reservation:</label>
+                                    <input type="text" name="Tickets[${ticketIndex}].TypeOfReservation" class="form-control" />
+                                </div>
+                            </div>`;
+                $('#ticket-container').append(ticketHtml);
+                ticketIndex++;
+            });
+        });
+    </script>
+}

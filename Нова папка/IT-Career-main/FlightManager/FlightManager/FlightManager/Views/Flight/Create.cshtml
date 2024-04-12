@@ -1,0 +1,69 @@
+﻿@model FlightManager.Data.Entities.Flight
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+
+<h2>Create Flight</h2>
+
+<form asp-action="Create">
+    <div>
+        <label asp-for="FromLocation"></label>
+        <input asp-for="FromLocation" class="form-control" />
+        <span asp-validation-for="FromLocation" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="ToLocation"></label>
+        <input asp-for="ToLocation" class="form-control" />
+        <span asp-validation-for="ToLocation" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="DepartureDateTime"></label>
+        <input asp-for="DepartureDateTime" class="form-control" type="datetime-local" />
+        <span asp-validation-for="DepartureDateTime" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="LandingDateTime"></label>
+        <input asp-for="LandingDateTime" class="form-control" type="datetime-local" />
+        <span asp-validation-for="LandingDateTime" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="AircraftType"></label>
+        <input asp-for="AircraftType" class="form-control" />
+        <span asp-validation-for="AircraftType" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="AircraftNumber"></label>
+        <input asp-for="AircraftNumber" class="form-control" />
+        <span asp-validation-for="AircraftNumber" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="PilotName"></label>
+        <input asp-for="PilotName" class="form-control" />
+        <span asp-validation-for="PilotName" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="PassengerCapacity"></label>
+        <input asp-for="PassengerCapacity" class="form-control" type="number" />
+        <span asp-validation-for="PassengerCapacity" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="BusinessClassCapacity"></label>
+        <input asp-for="BusinessClassCapacity" class="form-control" type="number" />
+        <span asp-validation-for="BusinessClassCapacity" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

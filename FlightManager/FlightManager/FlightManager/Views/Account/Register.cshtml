@@ -42,7 +42,7 @@
             </div>
             <div class="mb-1">
                 <label asp-for="EGN" class="control-label"></label>
-                <input asp-for="EGN" class="form-control"></input>
+                <input asp-for="EGN" class="form-control" data-val="true" data-val-length-max="10" data-val-length-min="10" data-val-regex="The EGN must be exactly 10 characters long." data-val-regex-pattern="^\d{10}$" />
                 <span asp-validation-for="EGN" class="text-danger"></span>
             </div>
             <div class="mb-1">

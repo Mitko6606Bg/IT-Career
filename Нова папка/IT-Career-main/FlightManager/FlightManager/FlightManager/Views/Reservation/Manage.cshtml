@@ -1,0 +1,52 @@
+﻿@model FlightManager.ViewModels.ReservationAndTicketViewModel
+
+<h1>Manage Reservation</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="Manage">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Reservation.Email" class="control-label">Email:</label>
+        <input asp-for="Reservation.Email" class="form-control" />
+        <span asp-validation-for="Reservation.Email" class="text-danger"></span>
+    </div>
+
+    <!-- Display the list of tickets -->
+    <h2>Tickets</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>EGN</th>
+                <th>Phone Number</th>
+                <th>Nationality</th>
+                <th>Type of Reservation</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model.Tickets)
+            {
+                <tr>
+                    <td>@ticket.FirstName</td>
+                    <td>@ticket.LastName</td>
+                    <td>@ticket.EGN</td>
+                    <td>@ticket.PhoneNumber</td>
+                    <td>@ticket.Nationality</td>
+                    <td>@ticket.TypeOfReservation</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="form-group">
+        <input type="submit" value="Save Changes" class="btn btn-primary" />
+    </div>
+</form>

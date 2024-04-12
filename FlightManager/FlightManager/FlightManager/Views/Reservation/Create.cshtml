@@ -1,61 +1,166 @@
-﻿@using FlightManager.ViewModels
-@model ReservationViewModel
+﻿@model FlightManager.ViewModels.ReservationAndTicketViewModel
+<style>
+    /* Define custom styles for the page */
+    body {
+        font-family: Arial, sans-serif;
+    }
 
+    /* Style for the main container */
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid #ccc;
+        background-color: #f9f9f9;
+    }
+
+    /* Style for the form elements */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    /* Style for the buttons */
+    .btn {
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Style for the primary button */
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+    }
+
+    /* Style for the secondary button */
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #fff;
+        border: none;
+    }
+
+    /* Style for the success button */
+    .btn-success {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+    }
+
+    /* Style for the add ticket button */
+    #add-ticket-btn {
+        margin-top: 10px;
+    }
+
+    /* Style for the ticket fields */
+    .ticket-fields {
+        border: 2px solid #ccc;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #fff;
+        margin-bottom: 20px;
+    }
+</style>
 <h1>Create Reservation</h1>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
+
+    <!-- Success and error messages -->
+    @if (TempData["SuccessMessageReservationCreate"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["SuccessMessageReservationCreate"]
+        </div>
+    }
+    @if (TempData["FailMessageReservationCreate"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["FailMessageReservationCreate"]
+        </div>
+    }
+
+    <!-- Back button -->
+    <div>
+        <a href="@Url.Action("Flights", "Home")" class="btn btn-secondary">Back</a>
     </div>
+
+    <!-- Reservation section -->
+    <h2>Reservation Details</h2>
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="Reservation.Email" class="control-label">Email:</label>
+            <input asp-for="Reservation.Email" class="form-control" />
+            <span asp-validation-for="Reservation.Email" class="text-danger"></span>
+        </div>
+
+        <h2>Tickets</h2>
+        <div id="ticket-container">
+            <!-- Ticket fields will be dynamically added here -->
+        </div>
+        <button type="button" id="add-ticket-btn" class="btn btn-success">Add Ticket</button>
+
+        <div class="form-group mt-3">
+            <input type="submit" value="Create Reservation" class="btn btn-primary" />
+        </div>
+    </form>
+
+@section Scripts {
+    
+
+    <script>
+        $(document).ready(function () {
+            var ticketIndex = 0;
+            $('#add-ticket-btn').click(function () {
+                var ticketHtml = `
+                                    <div class="ticket-fields">
+                                        <div class="form-group">
+                                            <label>First Name:</label>
+                                            <input type="text" name="Tickets[${ticketIndex}].FirstName" class="form-control" data-val="true" data-val-required="The First Name field is required." />
+                                            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].FirstName"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Last Name:</label>
+                                            <input type="text" name="Tickets[${ticketIndex}].LastName" class="form-control" data-val="true" data-val-required="The Last Name field is required." />
+                                            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].LastName"></span>
+                                        </div>
+                                                <div class="form-group">
+            <label>EGN:</label>
+            <input type="text" name="Tickets[${ticketIndex}].EGN" class="form-control"
+                   data-val="true"
+                   data-val-regex="The EGN must contain exactly 10 digits."
+                   data-val-regex-pattern="^\d{10}$" />
+            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].EGN"></span>
+        </div>
+                                        <div class="form-group">
+                                            <label>Phone Number:</label>
+                                            <input type="text" name="Tickets[${ticketIndex}].PhoneNumber" class="form-control" data-val="true" data-val-required="The Phone Number field is required." />
+                                            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].PhoneNumber"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Nationality:</label>
+                                            <input type="text" name="Tickets[${ticketIndex}].Nationality" class="form-control" data-val="true" data-val-required="The Nationality field is required." />
+                                            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].Nationality"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Type of Reservation:</label>
+                                             <select name="Tickets[${ticketIndex}].TypeOfReservation" class="form-control" data-val="true" data-val-required="The Type of Reservation field is required.">
+                                                 <option value="Normal">Normal</option>
+                                                 <option value="Business">Business</option>
+                                             </select>
+                                             <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].TypeOfReservation"></span>
+                                        </div>
+                                    </div>`;
+                $('#ticket-container').append(ticketHtml);
+                ticketIndex++;
+            });
+        });
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
-
-<form asp-action="Create">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="form-group">
-        <label asp-for="Email" class="control-label">Email:</label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="FirstName" class="control-label"></label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="LastName" class="control-label"></label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="EGN" class="control-label"></label>
-        <input asp-for="EGN" class="form-control" />
-        <span asp-validation-for="EGN" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="PhoneNumber" class="control-label"></label>
-        <input asp-for="PhoneNumber" class="form-control" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Nationality" class="control-label"></label>
-        <input asp-for="Nationality" class="form-control" />
-        <span asp-validation-for="Nationality" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="TypeOfReservation" class="control-label"></label>
-        <input asp-for="TypeOfReservation" class="form-control" />
-        <span asp-validation-for="TypeOfReservation" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
-    </div>
-</form>

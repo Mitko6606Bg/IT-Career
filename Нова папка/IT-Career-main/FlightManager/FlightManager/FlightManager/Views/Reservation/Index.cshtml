@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Reservation Success";
+    var userEmail = ViewData["UserEmail"] as string;
+}
+
+<h1>Reservation Successful!</h1>
+
+@if (!string.IsNullOrEmpty(userEmail))
+{
+    <p>An email confirmation has been sent to <strong>@userEmail</strong>.</p>
+}
+else
+{
+    <p>You have successfully made a reservation.</p>
+}

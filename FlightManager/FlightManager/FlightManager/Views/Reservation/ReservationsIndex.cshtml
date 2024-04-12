@@ -1,0 +1,87 @@
+﻿@using FlightManager.Data.Entities
+@model IEnumerable<Reservation>
+
+<div class="container">
+    <div class="filter-group">
+        <!-- No filters for reservations -->
+    </div>
+
+    <div class="filter-group">
+        <label>Show:</label>
+        <select id="pageSizeSelect" onchange="changePageSize()">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+    </div>
+
+    <div id="reservationsContainer">
+        @foreach (var reservation in Model)
+        {
+            <div class="reservationBox">
+                <p>Email: @reservation.Email</p>
+                <!-- Add any other reservation details here -->
+                <a href="@Url.Action("Manage", "Reservation", new { id = reservation.Id })" class="btn btn-primary">Manage</a>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function changePageSize() {
+        var selectedPageSize = document.getElementById("pageSizeSelect").value;
+        // Store the selected value in localStorage
+        localStorage.setItem("pageSize", selectedPageSize);
+        // Update the reservation list
+        updateReservationList(selectedPageSize);
+    }
+
+    // Function to retrieve and set the selected value from localStorage
+    window.onload = function () {
+        var savedPageSize = localStorage.getItem("pageSize");
+        if (savedPageSize) {
+            document.getElementById("pageSizeSelect").value = savedPageSize;
+        }
+    };
+
+    // Function to update the reservation list
+    function updateReservationList(pageSize) {
+        var url = '/Reservation/ReservationsIndex?pageSize=' + pageSize;
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                // Extract reservations container HTML
+                var reservationsContainerHtml = new DOMParser().parseFromString(data, 'text/html').getElementById("reservationsContainer").innerHTML;
+                document.getElementById("reservationsContainer").innerHTML = reservationsContainerHtml;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+
+<style>
+    .container {
+        text-align: center;
+    }
+
+    .reservationBox {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px; /* Increase margin between reservation boxes */
+        width: calc(25% - 20px); /* Adjust width as needed */
+        display: inline-block;
+        margin-right: 20px; /* Adjust margin as needed */
+        vertical-align: top;
+    }
+
+    .filter-group {
+        margin-bottom: 10px;
+    }
+
+        .filter-group label {
+            margin-right: 10px;
+        }
+
+        .filter-group input {
+            width: 150px; /* Adjust input width as needed */
+        }
+</style>

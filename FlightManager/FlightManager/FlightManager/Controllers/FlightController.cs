@@ -83,8 +83,49 @@ namespace FlightManager.Controllers
             return RedirectToAction(nameof(FlightsIndex));
         }
 
+        //public async Task<IActionResult> Manage(int id)
+        //{
+        //    var flight = await _context.Flights.FindAsync(id);
+
+        //    if (flight == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    // Map flight details to view model
+        //    var viewModel = new FlightViewModel
+        //    {
+        //        Id = flight.Id,
+        //        FromLocation = flight.FromLocation,
+        //        ToLocation = flight.ToLocation,
+        //        DepartureDateTime = flight.DepartureDateTime,
+        //        LandingDateTime = flight.LandingDateTime,
+        //        AircraftType = flight.AircraftType,
+        //        AircraftNumber = flight.AircraftNumber,
+        //        PilotName = flight.PilotName,
+        //        PassengerCapacity = flight.PassengerCapacity,
+        //        BusinessClassCapacity = flight.BusinessClassCapacity
+        //    };
+
+        //    return View(viewModel);
+        //}
+
         public async Task<IActionResult> Manage(int id)
         {
+            // Find the reservations with the given flight number
+            var reservations = await _context.Reservations
+                .Where(r => r.FlightNumber == id.ToString())
+                .ToListAsync();
+
+            if (reservations == null || !reservations.Any())
+            {
+                return NotFound();
+            }
+
+            // For simplicity, I'll assume there's only one reservation per flight
+            var reservation = reservations.FirstOrDefault();
+
+            // Find the associated flight for the reservation
             var flight = await _context.Flights.FindAsync(id);
 
             if (flight == null)
@@ -92,59 +133,107 @@ namespace FlightManager.Controllers
                 return NotFound();
             }
 
-            // Map flight details to view model
-            var viewModel = new FlightViewModel
+            // Find the tickets associated with the reservation
+            var tickets = await _context.Tickets.Where(t => t.ReservationId == reservation.Id).ToListAsync();
+
+            // Create a list to hold ReservationAndTicketViewModel instances
+            var reservationAndTicketViewModels = new List<ReservationAndTicketViewModel>();
+
+            // Populate the list with ReservationAndTicketViewModel instances for each reservation
+            foreach (var res in reservations)
             {
-                Id = flight.Id,
-                FromLocation = flight.FromLocation,
-                ToLocation = flight.ToLocation,
-                DepartureDateTime = flight.DepartureDateTime,
-                LandingDateTime = flight.LandingDateTime,
-                AircraftType = flight.AircraftType,
-                AircraftNumber = flight.AircraftNumber,
-                PilotName = flight.PilotName,
-                PassengerCapacity = flight.PassengerCapacity,
-                BusinessClassCapacity = flight.BusinessClassCapacity
+                var reservationViewModel = new ReservationViewModel
+                {
+                    Email = res.Email
+                };
+
+                var ticketViewModels = new List<TicketViewModel>();
+                var resTickets = await _context.Tickets.Where(t => t.ReservationId == res.Id).ToListAsync();
+
+                // Populate the list with TicketViewModel instances for each ticket
+                foreach (var ticket in resTickets)
+                {
+                    var ticketViewModel = new TicketViewModel
+                    {
+                        FirstName = ticket.FirstName,
+                        LastName = ticket.LastName,
+                        EGN = ticket.EGN,
+                        PhoneNumber = ticket.PhoneNumber,
+                        Nationality = ticket.Nationality,
+                        TypeOfReservation = ticket.TypeOfReservation
+                    };
+
+                    ticketViewModels.Add(ticketViewModel);
+                }
+
+                var reservationAndTicketViewModel = new ReservationAndTicketViewModel
+                {
+                    Reservation = reservationViewModel,
+                    Tickets = ticketViewModels
+                };
+
+                reservationAndTicketViewModels.Add(reservationAndTicketViewModel);
+            }
+
+            // Create a FlightReservationTicketViewModel and populate it with flight and reservationAndTicketViewModels
+            var viewModel = new FlightReservationTicketViewModel
+            {
+                Flight = new FlightViewModel
+                {
+                    // Populate flight properties as needed
+                    // For example:
+                    FromLocation = flight.FromLocation,
+                    ToLocation = flight.ToLocation,
+                    DepartureDateTime = flight.DepartureDateTime,
+                    LandingDateTime = flight.LandingDateTime,
+                    AircraftType = flight.AircraftType,
+                    PilotName = flight.PilotName,
+                    PassengerCapacity = flight.PassengerCapacity,
+                    BusinessClassCapacity = flight.BusinessClassCapacity,
+                    AircraftNumber = flight.AircraftNumber
+                },
+                ReservationAndTicket = reservationAndTicketViewModels
             };
 
             return View(viewModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Manage(FlightViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
 
-            // Retrieve flight from the database by its ID
-            var flight = await _context.Flights.FindAsync(model.Id);
+        //public async Task<IActionResult> Manage(FlightViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
 
-            if (flight == null)
-            {
-                return NotFound();
-            }
+        //    // Retrieve flight from the database by its ID
+        //    var flight = await _context.Flights.FindAsync(model.Id);
 
-            // Update flight details with values from the view model
-            flight.FromLocation = model.FromLocation;
-            flight.ToLocation = model.ToLocation;
-            flight.DepartureDateTime = model.DepartureDateTime;
-            flight.LandingDateTime = model.LandingDateTime;
-            flight.AircraftType = model.AircraftType;
-            flight.AircraftNumber = model.AircraftNumber;
-            flight.PilotName = model.PilotName;
-            flight.PassengerCapacity = model.PassengerCapacity;
-            flight.BusinessClassCapacity = model.BusinessClassCapacity;
+        //    if (flight == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            // Save changes to the database
-            _context.Entry(flight).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Changes saved successfully.";
+        //    // Update flight details with values from the view model
+        //    flight.FromLocation = model.FromLocation;
+        //    flight.ToLocation = model.ToLocation;
+        //    flight.DepartureDateTime = model.DepartureDateTime;
+        //    flight.LandingDateTime = model.LandingDateTime;
+        //    flight.AircraftType = model.AircraftType;
+        //    flight.AircraftNumber = model.AircraftNumber;
+        //    flight.PilotName = model.PilotName;
+        //    flight.PassengerCapacity = model.PassengerCapacity;
+        //    flight.BusinessClassCapacity = model.BusinessClassCapacity;
 
-            return RedirectToAction(nameof(Manage));
-        }
+        //    // Save changes to the database
+        //    _context.Entry(flight).State = EntityState.Modified;
+        //    await _context.SaveChangesAsync();
+
+        //    TempData["SuccessMessage"] = "Changes saved successfully.";
+
+        //    return RedirectToAction(nameof(Manage));
+        //}
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id)

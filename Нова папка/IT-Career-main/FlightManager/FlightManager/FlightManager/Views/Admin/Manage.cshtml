@@ -1,0 +1,76 @@
+﻿@using FlightManager.ViewModels
+@model ManageViewModel
+
+
+<div>
+    <a href="@Url.Action("UsersIndex", "Admin")" class="btn btn-secondary">Back</a
+</div>
+<div id="successMessage" class="alert alert-success" role="alert" style="color: green; display: none;"></div>
+
+
+<h2>Manage Account</h2>
+
+<form asp-action="Manage" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name">Name:</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Last_Name">Last Name:</label>
+        <input asp-for="Last_Name" class="form-control" />
+        <span asp-validation-for="Last_Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Username">Username:</label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EGN">EGN:</label>
+        <input asp-for="EGN" class="form-control" />
+        <span asp-validation-for="EGN" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address">Address:</label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PhoneNumber">Phone Number:</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+
+
+<script>
+    // Check if success message exists in TempData and display it
+    var successMessage = '@TempData["SuccessMessage"]';
+    if (successMessage) {
+        showSuccessMessage(successMessage);
+    }
+
+    // Function to show success message
+    function showSuccessMessage(message) {
+        var successMessageElement = document.getElementById("successMessage");
+        successMessageElement.innerText = message;
+        successMessageElement.style.display = "block";
+    }
+</script>

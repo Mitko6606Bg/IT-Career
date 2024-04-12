@@ -1,8 +1,92 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-<div class="align-items-center justify-content-center">
-    <label class="text-primary">Member Panel</label>
-</div>
+﻿@using FlightManager.ViewModels
+@model UserReservationTicketViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Your Account</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .info-group {
+            margin-bottom: 20px;
+        }
+
+            .info-group p {
+                margin: 5px 0;
+            }
+
+                .info-group p strong {
+                    font-weight: bold;
+                }
+
+        .ticket-info {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+            .ticket-info p {
+                margin: 5px 0;
+            }
+
+                .ticket-info p strong {
+                    font-weight: bold;
+                }
+    </style>
+</head>
+<body>
+    <h1>Manage Your Account</h1>
+
+    <div class="container">
+        <div class="info-group">
+            <p><strong>Name:</strong> @Model.User.Name @Model.User.Last_Name</p>
+            <p><strong>Username:</strong> @Model.User.Username</p>
+            <p><strong>EGN:</strong> @Model.User.EGN</p>
+            <p><strong>Address:</strong> @Model.User.Address</p>
+            <p><strong>Phone Number:</strong> @Model.User.PhoneNumber</p>
+        </div>
+
+        <h2>Your Reservations</h2>
+        @foreach (var reservationAndTicket in Model.ReservationAndTicket)
+        {
+            <h3>Reservation</h3>
+            <p><strong>Email:</strong> @reservationAndTicket.Reservation.Email</p>
+
+            <h3>Tickets</h3>
+            @foreach (var ticket in reservationAndTicket.Tickets)
+            {
+                <div class="ticket-info">
+                    <p><strong>First Name:</strong> @ticket.FirstName</p>
+                    <p><strong>Last Name:</strong> @ticket.LastName</p>
+                    <p><strong>EGN:</strong> @ticket.EGN</p>
+                    <p><strong>Phone Number:</strong> @ticket.PhoneNumber</p>
+                    <p><strong>Nationality:</strong> @ticket.Nationality</p>
+                    <p><strong>Type of Reservation:</strong> @ticket.TypeOfReservation</p>
+                </div>
+            }
+        }
+    </div>
+</body>
+</html>
