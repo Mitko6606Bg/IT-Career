@@ -21,6 +21,9 @@ namespace FlightManager.Data.Entities
         public DateTime LandingDateTime { get; set; }
 
         [Required]
+        public TimeSpan Duration { get; set; }
+
+        [Required]
         public string AircraftType { get; set; }
 
         [Required]

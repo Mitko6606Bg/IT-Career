@@ -1,0 +1,141 @@
+﻿@using FlightManager.ViewModels
+@model FlightReservationTicketViewModel
+
+<div>
+    <a href="@Url.Action("Flights", "Home")" class="btn btn-secondary">Back</a>
+</div>
+
+<div id="successMessage" class="alert alert-success" role="alert" style="display: none;"></div>
+
+<h2>Manage Flight</h2>
+
+<div>
+    <h4>Flight Information</h4>
+    <dl class="row">
+        <dt class="col-sm-3">From Location:</dt>
+        <dd class="col-sm-9">@Model.Flight.FromLocation</dd>
+
+        <dt class="col-sm-3">To Location:</dt>
+        <dd class="col-sm-9">@Model.Flight.ToLocation</dd>
+
+        <dt class="col-sm-3">Departure Date Time:</dt>
+        <dd class="col-sm-9">@Model.Flight.DepartureDateTime</dd>
+
+        <dt class="col-sm-3">Landing Date Time:</dt>
+        <dd class="col-sm-9">@Model.Flight.LandingDateTime</dd>
+
+        <dt class="col-sm-3">Aircraft Type:</dt>
+        <dd class="col-sm-9">@Model.Flight.AircraftType</dd>
+
+        <dt class="col-sm-3">Aircraft Number:</dt>
+        <dd class="col-sm-9">@Model.Flight.AircraftNumber</dd>
+
+        <dt class="col-sm-3">Pilot Name:</dt>
+        <dd class="col-sm-9">@Model.Flight.PilotName</dd>
+
+        <dt class="col-sm-3">Passenger Capacity:</dt>
+        <dd class="col-sm-9">@Model.Flight.PassengerCapacity</dd>
+
+        <dt class="col-sm-3">Business Class Capacity:</dt>
+        <dd class="col-sm-9">@Model.Flight.BusinessClassCapacity</dd>
+    </dl>
+</div>
+
+<script>
+    // Check if success message exists in TempData and display it
+    var successMessage = '@TempData["SuccessMessage"]';
+    if (successMessage) {
+        showSuccessMessage(successMessage);
+    }
+
+    // Function to show success message
+    function showSuccessMessage(message) {
+        var successMessageElement = document.getElementById("successMessage");
+        successMessageElement.innerText = message;
+        successMessageElement.style.display = "block";
+    }
+
+    // Filter function for emails
+    function filterEmails() {
+        var searchTerm = document.getElementById("searchTerm").value.toUpperCase();
+        var emails = document.getElementsByClassName("email");
+
+        for (var i = 0; i < emails.length; i++) {
+            var email = emails[i];
+            var emailText = email.innerText.toUpperCase();
+
+            if (emailText.indexOf(searchTerm) > -1) {
+                email.style.display = "";
+            } else {
+                email.style.display = "none";
+            }
+        }
+    }
+
+    // Attach filterEmails function to the input field's onchange event
+    document.getElementById("searchTerm").onchange = filterEmails;
+</script>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Manage" method="get">
+            <div class="form-group">
+                <label for="searchTerm">Search by Email:</label>
+                <input type="text" id="searchTerm" name="searchTerm" class="form-control" />
+            </div>
+            <button type="button" class="btn btn-primary" onclick="filterEmails()">Search</button>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Number of Tickets</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>EGN</th>
+            <th>Phone Number</th>
+            <th>Nationality</th>
+            <th>Type of Reservation</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reservationAndTicket in Model.ReservationAndTicket)
+        {
+            <tr class="email">
+                <td>@reservationAndTicket.Reservation.Email</td>
+                <td>@reservationAndTicket.Tickets.Count</td>
+                @if (reservationAndTicket.Tickets.Any())
+                {
+                    var firstTicket = reservationAndTicket.Tickets.First();
+                    <td>@firstTicket.FirstName</td>
+                    <td>@firstTicket.LastName</td>
+                    <td>@firstTicket.EGN</td>
+                    <td>@firstTicket.PhoneNumber</td>
+                    <td>@firstTicket.Nationality</td>
+                    <td>@firstTicket.TypeOfReservation</td>
+                }
+                else
+                {
+                    <td colspan="7">No tickets</td>
+                }
+            </tr>
+            @foreach (var ticket in reservationAndTicket.Tickets.Skip(1))
+            {
+                <tr class="email">
+                    <td></td> <!-- Empty cell for spacing -->
+                    <td></td>
+                    <td>@ticket.FirstName</td>
+                    <td>@ticket.LastName</td>
+                    <td>@ticket.EGN</td>
+                    <td>@ticket.PhoneNumber</td>
+                    <td>@ticket.Nationality</td>
+                    <td>@ticket.TypeOfReservation</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

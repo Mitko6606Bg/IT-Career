@@ -61,6 +61,21 @@ namespace FlightManager.Controllers
                 return View(model);
             }
 
+            if (ModelState.IsValid)
+            {
+                // Compare departure and landing date-times
+                if (model.LandingDateTime <= model.DepartureDateTime)
+                {
+                    // Landing date-time must be after departure date-time
+                    TempData["FailMessage"] = "Landing date and time must be after departure date and time.";
+                    return RedirectToAction(nameof(Create)); // Redirect to the create page
+                }
+            }
+
+
+            TimeSpan duration = model.LandingDateTime - model.DepartureDateTime;
+            
+
             // Your code to create a new flight goes here
             var newFlight = new Flight
             {
@@ -72,7 +87,8 @@ namespace FlightManager.Controllers
                 AircraftNumber = model.AircraftNumber,
                 PilotName = model.PilotName,
                 PassengerCapacity = model.PassengerCapacity,
-                BusinessClassCapacity = model.BusinessClassCapacity
+                BusinessClassCapacity = model.BusinessClassCapacity,
+                Duration = duration,
             };
 
             // Example: Save the new flight to the database using Entity Framework Core
@@ -83,44 +99,13 @@ namespace FlightManager.Controllers
             return RedirectToAction(nameof(FlightsIndex));
         }
 
-        //public async Task<IActionResult> Manage(int id)
-        //{
-        //    var flight = await _context.Flights.FindAsync(id);
 
-        //    if (flight == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    // Map flight details to view model
-        //    var viewModel = new FlightViewModel
-        //    {
-        //        Id = flight.Id,
-        //        FromLocation = flight.FromLocation,
-        //        ToLocation = flight.ToLocation,
-        //        DepartureDateTime = flight.DepartureDateTime,
-        //        LandingDateTime = flight.LandingDateTime,
-        //        AircraftType = flight.AircraftType,
-        //        AircraftNumber = flight.AircraftNumber,
-        //        PilotName = flight.PilotName,
-        //        PassengerCapacity = flight.PassengerCapacity,
-        //        BusinessClassCapacity = flight.BusinessClassCapacity
-        //    };
-
-        //    return View(viewModel);
-        //}
-
-        public async Task<IActionResult> Manage(int id)
+        public async Task<IActionResult> Manage(int id, FlightReservationTicketViewModel viewModelUpdate)
         {
             // Find the reservations with the given flight number
             var reservations = await _context.Reservations
                 .Where(r => r.FlightNumber == id.ToString())
                 .ToListAsync();
-
-            if (reservations == null || !reservations.Any())
-            {
-                return NotFound();
-            }
 
             // For simplicity, I'll assume there's only one reservation per flight
             var reservation = reservations.FirstOrDefault();
@@ -128,12 +113,96 @@ namespace FlightManager.Controllers
             // Find the associated flight for the reservation
             var flight = await _context.Flights.FindAsync(id);
 
-            if (flight == null)
+            FlightReservationTicketViewModel viewModel;
+
+            if (reservation == null)
             {
-                return NotFound();
+                // Render the view without the reservation and tickets part
+                viewModel = new FlightReservationTicketViewModel
+                {
+                    Flight = new FlightViewModel
+                    {
+                        // Populate flight properties as needed
+                        // For example:
+                        Id = flight.Id,
+                        FromLocation = flight.FromLocation,
+                        ToLocation = flight.ToLocation,
+                        DepartureDateTime = flight.DepartureDateTime,
+                        LandingDateTime = flight.LandingDateTime,
+                        AircraftType = flight.AircraftType,
+                        PilotName = flight.PilotName,
+                        PassengerCapacity = flight.PassengerCapacity,
+                        BusinessClassCapacity = flight.BusinessClassCapacity,
+                        AircraftNumber = flight.AircraftNumber
+                    },
+                    ReservationAndTicket = null // Set ReservationAndTicket to null when there are no reservations
+                };
+
+                if (!ModelState.IsValid)
+                {
+                    // Handle invalid ModelState for AircraftNumber
+                    // For example:
+                    ModelState.Remove("ReservationAndTicket"); // Remove AircraftNumber from ModelState
+                }
+                if (ModelState.IsValid)
+                {
+                    flight.FromLocation = viewModelUpdate.Flight.FromLocation;
+                    flight.ToLocation = viewModelUpdate.Flight.ToLocation;
+                    flight.DepartureDateTime = viewModelUpdate.Flight.DepartureDateTime;
+                    flight.LandingDateTime = viewModelUpdate.Flight.LandingDateTime;
+                    flight.AircraftType = viewModelUpdate.Flight.AircraftType;
+                    flight.PilotName = viewModelUpdate.Flight.PilotName;
+                    flight.PassengerCapacity = viewModelUpdate.Flight.PassengerCapacity;
+                    flight.BusinessClassCapacity = viewModelUpdate.Flight.BusinessClassCapacity;
+                    flight.AircraftNumber = viewModelUpdate.Flight.AircraftNumber;
+
+                    // Save changes to the flight
+                    _context.Flights.Update(flight);
+                    await _context.SaveChangesAsync();
+                }
+
+                return View(viewModel);
             }
 
-            // Find the tickets associated with the reservation
+            FlightViewModel flightView = new FlightViewModel
+            {
+                // Populate flight properties as needed
+                // For example:
+                Id = flight.Id,
+                FromLocation = flight.FromLocation,
+                ToLocation = flight.ToLocation,
+                DepartureDateTime = flight.DepartureDateTime,
+                LandingDateTime = flight.LandingDateTime,
+                AircraftType = flight.AircraftType,
+                PilotName = flight.PilotName,
+                PassengerCapacity = flight.PassengerCapacity,
+                BusinessClassCapacity = flight.BusinessClassCapacity,
+                AircraftNumber = flight.AircraftNumber
+            };
+
+            if (!ModelState.IsValid)
+            {
+                // Handle invalid ModelState for AircraftNumber
+                // For example:
+                ModelState.Remove("ReservationAndTicket"); // Remove AircraftNumber from ModelState
+            }
+            if (ModelState.IsValid)
+            {
+                flight.FromLocation = viewModelUpdate.Flight.FromLocation;
+                flight.ToLocation = viewModelUpdate.Flight.ToLocation;
+                flight.DepartureDateTime = viewModelUpdate.Flight.DepartureDateTime;
+                flight.LandingDateTime = viewModelUpdate.Flight.LandingDateTime;
+                flight.AircraftType = viewModelUpdate.Flight.AircraftType;
+                flight.PilotName = viewModelUpdate.Flight.PilotName;
+                flight.PassengerCapacity = viewModelUpdate.Flight.PassengerCapacity;
+                flight.BusinessClassCapacity = viewModelUpdate.Flight.BusinessClassCapacity;
+                flight.AircraftNumber = viewModelUpdate.Flight.AircraftNumber;
+
+                // Save changes to the flight
+                _context.Flights.Update(flight);
+                await _context.SaveChangesAsync();
+            }
+
             var tickets = await _context.Tickets.Where(t => t.ReservationId == reservation.Id).ToListAsync();
 
             // Create a list to hold ReservationAndTicketViewModel instances
@@ -175,65 +244,26 @@ namespace FlightManager.Controllers
                 reservationAndTicketViewModels.Add(reservationAndTicketViewModel);
             }
 
-            // Create a FlightReservationTicketViewModel and populate it with flight and reservationAndTicketViewModels
-            var viewModel = new FlightReservationTicketViewModel
+            // Populate view model with flight and reservationAndTicketViewModels
+
+            viewModel = new FlightReservationTicketViewModel
             {
-                Flight = new FlightViewModel
-                {
-                    // Populate flight properties as needed
-                    // For example:
-                    FromLocation = flight.FromLocation,
-                    ToLocation = flight.ToLocation,
-                    DepartureDateTime = flight.DepartureDateTime,
-                    LandingDateTime = flight.LandingDateTime,
-                    AircraftType = flight.AircraftType,
-                    PilotName = flight.PilotName,
-                    PassengerCapacity = flight.PassengerCapacity,
-                    BusinessClassCapacity = flight.BusinessClassCapacity,
-                    AircraftNumber = flight.AircraftNumber
-                },
+                Flight = flightView,
                 ReservationAndTicket = reservationAndTicketViewModels
             };
 
+
+            // Redirect to a success action or return a success message
+            TempData["SuccessMessage"] = "Flight details updated successfully!";
             return View(viewModel);
         }
 
 
-        //public async Task<IActionResult> Manage(FlightViewModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(model);
-        //    }
 
-        //    // Retrieve flight from the database by its ID
-        //    var flight = await _context.Flights.FindAsync(model.Id);
-
-        //    if (flight == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-
-        //    // Update flight details with values from the view model
-        //    flight.FromLocation = model.FromLocation;
-        //    flight.ToLocation = model.ToLocation;
-        //    flight.DepartureDateTime = model.DepartureDateTime;
-        //    flight.LandingDateTime = model.LandingDateTime;
-        //    flight.AircraftType = model.AircraftType;
-        //    flight.AircraftNumber = model.AircraftNumber;
-        //    flight.PilotName = model.PilotName;
-        //    flight.PassengerCapacity = model.PassengerCapacity;
-        //    flight.BusinessClassCapacity = model.BusinessClassCapacity;
-
-        //    // Save changes to the database
-        //    _context.Entry(flight).State = EntityState.Modified;
-        //    await _context.SaveChangesAsync();
-
-        //    TempData["SuccessMessage"] = "Changes saved successfully.";
-
-        //    return RedirectToAction(nameof(Manage));
-        //}
+        public IActionResult Delete()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id)

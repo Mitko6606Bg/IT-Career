@@ -30,6 +30,7 @@
                         <p><strong>To Location:</strong> @flight.ToLocation</p>
                         <p><strong>Departure Date Time:</strong> @flight.DepartureDateTime</p>
                         <p><strong>Landing Date Time:</strong> @flight.LandingDateTime</p>
+                        <p><strong>Duration Time:</strong> @flight.Duration</p>
                     </div>
                     <div class="flight-info">
                         <p><strong>Aircraft Type:</strong> @flight.AircraftType</p>
@@ -38,9 +39,19 @@
                         <p><strong>Passenger Capacity:</strong> @flight.PassengerCapacity</p>
                         <p><strong>Business Class Capacity:</strong> @flight.BusinessClassCapacity</p>
                     </div>
-                    <div>
-                        <a href="@Url.Action("Create", "Reservation", new { id = flight.Id })" class="btn btn-primary">Reserve</a>
-                    </div>
+                    @if (User.IsInRole("Member"))
+                    {
+                        <div>
+                            <a href="@Url.Action("View", "Member", new { id = flight.Id })" class="btn btn-primary">View</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <a href="@Url.Action("Create", "Reservation", new { id = flight.Id })" class="btn btn-primary">Reserve</a>
+                        </div>
+                    }
+                    
                 </div>
             </div>
         }

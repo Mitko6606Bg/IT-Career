@@ -46,10 +46,14 @@ namespace FlightManager.Controllers
         }
         public IActionResult Flights(int pageSize = 10, int pageNumber = 1)
         {
+
+
             var flights = _context.Flights
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
+
+            
 
             var flightDetails = flights.Select(u => new FlightViewModel
             {
@@ -62,7 +66,8 @@ namespace FlightManager.Controllers
                 AircraftNumber = u.AircraftNumber,
                 PilotName = u.PilotName,
                 PassengerCapacity = u.PassengerCapacity,
-                BusinessClassCapacity = u.BusinessClassCapacity
+                BusinessClassCapacity = u.BusinessClassCapacity,
+                Duration = u.Duration
                 ,
             });
 

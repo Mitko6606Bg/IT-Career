@@ -45,7 +45,7 @@ namespace FlightManager.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(string userEmail)
         {
             var model = new ReservationAndTicketViewModel();
 
@@ -53,12 +53,12 @@ namespace FlightManager.Controllers
             {
                 // Get the email of the logged-in user
                 var user = await _userManager.GetUserAsync(User);
-                var userEmail = user?.Email;
+                userEmail = user?.Email;
 
-                // Populate the email field in the view model
+                ViewData["UserEmail"] = userEmail;
                 model.Reservation.Email = userEmail;
             }
-
+            ViewData["UserEmail"] = userEmail;
             return View(model);
         }
 
@@ -197,63 +197,52 @@ namespace FlightManager.Controllers
 
         public async Task<IActionResult> Manage(int id)
         {
-            var user = await _userManager.GetUserAsync(User);
+            // Find the reservation with the given id
+            var reservation = await _context.Reservations.FindAsync(id);
 
-            if (user == null)
+            if (reservation == null)
             {
                 return NotFound();
             }
 
-            // Find reservations associated with the user's email
-            var reservations = await _context.Reservations.Where(r => r.Email == user.Email).ToListAsync();
-            var reservationViewModels = new List<ReservationViewModel>();
+            // Find tickets associated with the reservation
+            var tickets = await _context.Tickets.Where(t => t.ReservationId == reservation.Id).ToListAsync();
 
-            foreach (var reservation in reservations)
+            // Create a list to hold TicketViewModel instances
+            var ticketViewModels = new List<TicketViewModel>();
+
+            // Populate the list with TicketViewModel instances for each ticket
+            foreach (var ticket in tickets)
             {
-                // Find tickets associated with the reservation
-                var tickets = await _context.Tickets.Where(t => t.ReservationId == reservation.Id).ToListAsync();
-
-                // Create a list to hold TicketViewModel instances
-                var ticketViewModels = new List<TicketViewModel>();
-
-                // Populate the list with TicketViewModel instances for each ticket
-                foreach (var ticket in tickets)
+                var ticketViewModel = new TicketViewModel
                 {
-                    var ticketViewModel = new TicketViewModel
-                    {
-                        FirstName = ticket.FirstName,
-                        LastName = ticket.LastName,
-                        EGN = ticket.EGN,
-                        PhoneNumber = ticket.PhoneNumber,
-                        Nationality = ticket.Nationality,
-                        TypeOfReservation = ticket.TypeOfReservation
-                    };
-
-                    ticketViewModels.Add(ticketViewModel);
-                }
-
-                // Create a ReservationViewModel and populate it with reservation email and its tickets
-                var reservationViewModel = new ReservationViewModel
-                {
-                    Email = reservation.Email,
+                    FirstName = ticket.FirstName,
+                    LastName = ticket.LastName,
+                    EGN = ticket.EGN,
+                    PhoneNumber = ticket.PhoneNumber,
+                    Nationality = ticket.Nationality,
+                    TypeOfReservation = ticket.TypeOfReservation
                 };
 
-                reservationViewModels.Add(reservationViewModel);
+                ticketViewModels.Add(ticketViewModel);
             }
 
-            var viewModel = new ManageViewModel
+            // Create a ReservationViewModel and populate it with reservation email
+            var reservationViewModel = new ReservationViewModel
             {
-                Id = user.Id,
-                Name = user.Name,
-                Last_Name = user.Last_Name,
-                Username = user.UserName,
-                EGN = user.EGN,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber,
+                Email = reservation.Email,
+            };
+
+            // Create a ReservationAndTicketViewModel and populate it with reservation and tickets
+            var viewModel = new ReservationAndTicketViewModel
+            {
+                Reservation = reservationViewModel,
+                Tickets = ticketViewModels
             };
 
             return View(viewModel);
         }
+
 
 
         [HttpPost]

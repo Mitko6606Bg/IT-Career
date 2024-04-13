@@ -97,5 +97,7 @@ namespace FlightManager.Controllers
                 ? Redirect(returnUrl)
                 : RedirectToAction(nameof(HomeController.Index), nameof(HomeController));
         }
+
+        
     }
 }

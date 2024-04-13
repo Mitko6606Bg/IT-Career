@@ -12,6 +12,7 @@ namespace FlightManager.ViewModels
         public DateTime DepartureDateTime { get; set; }
 
         public DateTime LandingDateTime { get; set; }
+        public TimeSpan Duration { get; set; }
 
         public string AircraftType { get; set; }
 

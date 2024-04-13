@@ -67,93 +67,93 @@
 <h1>Create Reservation</h1>
 
 
-    <!-- Success and error messages -->
-    @if (TempData["SuccessMessageReservationCreate"] != null)
-    {
-        <div class="alert alert-success" role="alert">
-            @TempData["SuccessMessageReservationCreate"]
-        </div>
-    }
-    @if (TempData["FailMessageReservationCreate"] != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @TempData["FailMessageReservationCreate"]
-        </div>
-    }
+<!-- Success and error messages -->
+@if (TempData["SuccessMessageReservationCreate"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessageReservationCreate"]
+    </div>
+}
+@if (TempData["FailMessageReservationCreate"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["FailMessageReservationCreate"]
+    </div>
+}
 
-    <!-- Back button -->
-    <div>
-        <a href="@Url.Action("Flights", "Home")" class="btn btn-secondary">Back</a>
+<!-- Back button -->
+<div>
+    <a href="@Url.Action("Flights", "Home")" class="btn btn-secondary">Back</a>
+</div>
+
+<!-- Reservation section -->
+<h2>Reservation Details</h2>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Reservation.Email" class="control-label">Email:</label>
+        <input asp-for="Reservation.Email" class="form-control" />
+        <span asp-validation-for="Reservation.Email" class="text-danger"></span>
     </div>
 
-    <!-- Reservation section -->
-    <h2>Reservation Details</h2>
-    <form asp-action="Create">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <h2>Tickets</h2>
+    <div id="ticket-container">
+        <!-- Ticket fields will be dynamically added here -->
+    </div>
+    <button type="button" id="add-ticket-btn" class="btn btn-success">Add Ticket</button>
 
-        <div class="form-group">
-            <label asp-for="Reservation.Email" class="control-label">Email:</label>
-            <input asp-for="Reservation.Email" class="form-control" />
-            <span asp-validation-for="Reservation.Email" class="text-danger"></span>
-        </div>
-
-        <h2>Tickets</h2>
-        <div id="ticket-container">
-            <!-- Ticket fields will be dynamically added here -->
-        </div>
-        <button type="button" id="add-ticket-btn" class="btn btn-success">Add Ticket</button>
-
-        <div class="form-group mt-3">
-            <input type="submit" value="Create Reservation" class="btn btn-primary" />
-        </div>
-    </form>
+    <div class="form-group mt-3">
+        <input type="submit" value="Create Reservation" class="btn btn-primary" />
+    </div>
+</form>
 
 @section Scripts {
-    
+
 
     <script>
         $(document).ready(function () {
             var ticketIndex = 0;
             $('#add-ticket-btn').click(function () {
                 var ticketHtml = `
-                                    <div class="ticket-fields">
-                                        <div class="form-group">
-                                            <label>First Name:</label>
-                                            <input type="text" name="Tickets[${ticketIndex}].FirstName" class="form-control" data-val="true" data-val-required="The First Name field is required." />
-                                            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].FirstName"></span>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Last Name:</label>
-                                            <input type="text" name="Tickets[${ticketIndex}].LastName" class="form-control" data-val="true" data-val-required="The Last Name field is required." />
-                                            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].LastName"></span>
-                                        </div>
+                                            <div class="ticket-fields">
                                                 <div class="form-group">
-            <label>EGN:</label>
-            <input type="text" name="Tickets[${ticketIndex}].EGN" class="form-control"
-                   data-val="true"
-                   data-val-regex="The EGN must contain exactly 10 digits."
-                   data-val-regex-pattern="^\d{10}$" />
-            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].EGN"></span>
-        </div>
-                                        <div class="form-group">
-                                            <label>Phone Number:</label>
-                                            <input type="text" name="Tickets[${ticketIndex}].PhoneNumber" class="form-control" data-val="true" data-val-required="The Phone Number field is required." />
-                                            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].PhoneNumber"></span>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Nationality:</label>
-                                            <input type="text" name="Tickets[${ticketIndex}].Nationality" class="form-control" data-val="true" data-val-required="The Nationality field is required." />
-                                            <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].Nationality"></span>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Type of Reservation:</label>
-                                             <select name="Tickets[${ticketIndex}].TypeOfReservation" class="form-control" data-val="true" data-val-required="The Type of Reservation field is required.">
-                                                 <option value="Normal">Normal</option>
-                                                 <option value="Business">Business</option>
-                                             </select>
-                                             <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].TypeOfReservation"></span>
-                                        </div>
-                                    </div>`;
+                                                    <label>First Name:</label>
+                                                    <input type="text" name="Tickets[${ticketIndex}].FirstName" class="form-control" data-val="true" data-val-required="The First Name field is required." />
+                                                    <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].FirstName"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Last Name:</label>
+                                                    <input type="text" name="Tickets[${ticketIndex}].LastName" class="form-control" data-val="true" data-val-required="The Last Name field is required." />
+                                                    <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].LastName"></span>
+                                                </div>
+                                                        <div class="form-group">
+                    <label>EGN:</label>
+                    <input type="text" name="Tickets[${ticketIndex}].EGN" class="form-control"
+                           data-val="true"
+                           data-val-regex="The EGN must contain exactly 10 digits."
+                           data-val-regex-pattern="^\d{10}$" />
+                    <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].EGN"></span>
+                </div>
+                                                <div class="form-group">
+                                                    <label>Phone Number:</label>
+                                                    <input type="text" name="Tickets[${ticketIndex}].PhoneNumber" class="form-control" data-val="true" data-val-required="The Phone Number field is required." />
+                                                    <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].PhoneNumber"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Nationality:</label>
+                                                    <input type="text" name="Tickets[${ticketIndex}].Nationality" class="form-control" data-val="true" data-val-required="The Nationality field is required." />
+                                                    <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].Nationality"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Type of Reservation:</label>
+                                                     <select name="Tickets[${ticketIndex}].TypeOfReservation" class="form-control" data-val="true" data-val-required="The Type of Reservation field is required.">
+                                                         <option value="Normal">Normal</option>
+                                                         <option value="Business">Business</option>
+                                                     </select>
+                                                     <span class="text-danger" data-valmsg-for="Tickets[${ticketIndex}].TypeOfReservation"></span>
+                                                </div>
+                                            </div>`;
                 $('#ticket-container').append(ticketHtml);
                 ticketIndex++;
             });
