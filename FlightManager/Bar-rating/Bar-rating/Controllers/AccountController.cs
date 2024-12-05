@@ -103,11 +103,13 @@ namespace Bar_rating.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        private IActionResult RedirectToLocal(string? returnUrl)
+        public async Task<IActionResult> MyReviews()
         {
-            return !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
-                ? Redirect(returnUrl)
-                : RedirectToAction(nameof(HomeController.Index), nameof(HomeController));
+
+            var user = await _userManager.GetUserAsync(User);
+            var myReviews = _context.Reviews.Where(r => r.UserId == user.Id).ToList();
+
+            return View(myReviews);
         }
 
 

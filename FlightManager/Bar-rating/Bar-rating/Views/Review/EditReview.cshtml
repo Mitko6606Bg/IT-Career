@@ -1,0 +1,33 @@
+﻿@using Bar_rating.ViewModels
+@model EditReviewViewModel
+
+@{
+    ViewData["Title"] = "Edit Review";
+}
+
+<h2>Edit Review</h2>
+
+<div class="review-container">
+    <form asp-action="EditReview" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="RatingText">Rating Text:</label>
+            <textarea class="form-control" rows="4" asp-for="RatingText"></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="Rating">Rating:</label>
+            <select class="form-control" asp-for="Rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a asp-action="MyReviews" class="btn btn-secondary">Cancel</a>
+        
+        <button type="submit" formaction="@Url.Action("DeleteReview", "Review", new { id = Model.Id })" class="btn btn-danger">Delete Review</button>
+
+    </form>
+</div>

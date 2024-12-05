@@ -1,0 +1,44 @@
+﻿@using Bar_rating.ViewModels
+@model AdminIndexViewModel
+
+<style>
+    .admin-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .admin-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .admin-container ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .admin-container li {
+            margin-bottom: 10px;
+        }
+
+            .admin-container li span {
+                font-weight: bold;
+            }
+</style>
+
+<div class="admin-container">
+    <h2>Admin Dashboard</h2>
+
+    <div>
+        <h3>Statistics</h3>
+        <ul>
+            <li><span>Total Bars:</span> @Model.BarCount</li>
+            <li><span>Total Users:</span> @Model.UserCount</li>
+            <li><span>Total Reviews:</span> @Model.ReviewCount</li>
+        </ul>
+    </div>
+</div>

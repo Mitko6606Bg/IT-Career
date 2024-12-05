@@ -1,0 +1,128 @@
+﻿@model Bar_rating.ViewModels.BarDetailsWithReviewViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<style>
+    .details-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .details-container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .details-container dl {
+            margin-bottom: 20px;
+        }
+
+        .details-container dt {
+            font-weight: bold;
+        }
+
+        .details-container img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+    .review-container {
+        margin-top: 20px;
+    }
+
+        .review-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+    .stars-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .star-button {
+        padding: 10px 15px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .star-button:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<div class="details-container">
+    <h1>Details</h1>
+    <div>
+        <dl class="row">
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt class="col-sm-4">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+
+            <dt class="col-sm-4">
+                Image
+            </dt>
+            <dd class="col-sm-8">
+                @if (Model.Image != null && Model.Image.Length > 0)
+                {
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.Image)" alt="Bar Image" />
+                }
+                else
+                {
+                    <p>No image available</p>
+                }
+            </dd>
+        </dl>
+    </div>
+
+    <div class="review-container">
+        <h4>Write a Review</h4>
+        <form asp-action="CreateReview" method="post">
+            <input type="hidden" asp-for="Id" /> <!-- Скрито поле за Id на бара -->
+            <div class="form-group">
+                <textarea rows="4" placeholder="Write your review here..." class="form-control" asp-for="RatingText"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="rating">Rating: </label>
+                <select class="form-control" asp-for="Rating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
+    </div>
+
+    <div>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

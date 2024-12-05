@@ -1,0 +1,36 @@
+
+Abonat 1:
+Nomer na dogovor: BG123456
+Srok: 1
+Ime: f
+Phone number: 0891234567
+Taksa na minuta: 12
+Mesechna taksa: 1
+Provedeni razgovori: 10
+
+Abonat 2:
+Nomer na dogovor: BG123455
+Srok: 2
+Ime: a
+Phone number: 0897654321
+Taksa na minuta: 1
+Mesechna taksa: 2
+Provedeni razgovori: 11
+
+Abonat 3:
+Nomer na dogovor: BG123455
+Srok: 2
+Ime: d
+Phone number: 0897654321
+Taksa na minuta: 1
+Mesechna taksa: 2
+Provedeni razgovori: 32
+
+Abonat 4:
+Nomer na dogovor: BG102349
+Srok: 1
+Ime: mitko
+Phone number: 0891234567
+Taksa na minuta: 0.2
+Mesechna taksa: 100
+Provedeni razgovori: 42
